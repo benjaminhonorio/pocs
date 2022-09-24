@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import "./App.css";
 const people = [
   {
@@ -412,20 +412,14 @@ const useExpansion = () => {
   return { expand, toggleExpand, containerRef };
 };
 
-function PersonRow({
-  person,
-  children,
-}: {
-  person: IPerson;
-  children?: ReactNode;
-}) {
+function PersonRow({ person }: { person: IPerson }) {
   const { expand, toggleExpand, containerRef } = useExpansion();
 
   console.log("person", person.name);
   return (
     <div className="person_row" ref={containerRef} onClick={toggleExpand}>
       {person.name} {person.lastname}
-      {children && expand ? children : null}
+      {expand ? <PetRow pet={person.pet} /> : null}
     </div>
   );
 }
@@ -444,13 +438,9 @@ function PetRow({ pet }: { pet: IPet }) {
 function App() {
   return (
     <div>
-      {people.map((person) => {
-        return (
-          <PersonRow key={person.id} person={person}>
-            <PetRow pet={person.pet} />
-          </PersonRow>
-        );
-      })}
+      {people.map((person) => (
+        <PersonRow key={person.id} person={person} />
+      ))}
     </div>
   );
 }
