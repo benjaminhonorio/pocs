@@ -391,29 +391,9 @@ type IPerson = typeof people[0];
 
 type IPet = Pick<IPerson, "pet">["pet"];
 
-// function Expandible({ data, fields, children }) {
-//   const [expand, setExpand] = useState(false);
-
-//   return (
-//     <div style={{ border: "1px solid black", width: "200px" }}>
-//       <div onClick={() => setExpand(!expand)}>
-//         {fields.map((field) => {
-//           return (
-//             <span key={field}>
-//               {field}:{data[field]}
-//             </span>
-//           );
-//         })}
-//       </div>
-//       {expand && children ? children : null}
-//     </div>
-//   );
-// }
-
 const useExpansion = () => {
   const [expand, setExpand] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [selected, setSelected] = useState(false);
 
   const toggleExpand = (e: MouseEvent) => {
     if (containerRef?.current === e.target) setExpand(!expand);
@@ -421,7 +401,6 @@ const useExpansion = () => {
   const handleClose = (e: Event) => {
     if (!containerRef.current?.contains(e.target as Node)) {
       setExpand(false);
-      setSelected(false);
     }
   };
 
@@ -430,18 +409,7 @@ const useExpansion = () => {
     return () => document.removeEventListener("click", handleClose);
   }, []);
 
-  useEffect(() => {
-    const handleSelected = (ev: CustomEventInit) => {
-      if (ev.detail) setSelected(ev.detail);
-    };
-    containerRef.current?.addEventListener("colorize", handleSelected);
-
-    return () => {
-      containerRef.current?.removeEventListener("colorize", handleSelected);
-    };
-  }, []);
-
-  return { selected, expand, toggleExpand, containerRef };
+  return { expand, toggleExpand, containerRef };
 };
 
 function PersonRow({
@@ -451,19 +419,11 @@ function PersonRow({
   person: IPerson;
   children?: ReactNode;
 }) {
-  const { selected, expand, toggleExpand, containerRef } = useExpansion();
+  const { expand, toggleExpand, containerRef } = useExpansion();
+
   console.log("person", person.name);
   return (
-    <div
-      className="person_row"
-      style={{ backgroundColor: selected ? "lightblue" : "initial" }}
-      ref={containerRef}
-      onClick={(e) => {
-        toggleExpand(e);
-        const event = new CustomEvent("colorize", { detail: true });
-        containerRef.current?.dispatchEvent(event);
-      }}
-    >
+    <div className="person_row" ref={containerRef} onClick={toggleExpand}>
       {person.name} {person.lastname}
       {children && expand ? children : null}
     </div>
