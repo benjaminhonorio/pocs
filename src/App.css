@@ -48,9 +48,9 @@ td {
   border-collapse: collapse;
 }
 
-/* .person_row:hover {
+.person_row:hover {
   background-color: beige;
-} */
+}
 
 .person_row:first-of-type {
   border-top: 1px solid #888;
